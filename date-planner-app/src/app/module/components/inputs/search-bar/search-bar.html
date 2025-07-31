@@ -1,0 +1,9 @@
+<div class="input-group mb-2 mt-1" style="z-index: 1">
+    <label class="input-group-text" for="searchInput-{{cId}}">
+        <img style="width: 1rem;" [src]="dropdownIcon()?'chevron_down.svg':'search.svg'" alt="+">
+    </label>
+    <input type="text" #searchInput id="searchInput-{{cId}}" class="form-control {{showError()?'border border-danger':''}} {{ngDisabled?'bg-body-secondary':''}}" [placeholder]="placeholder()"
+        (focus)="toggleDropdown(); focus.emit()" (click)="toggleDropdown()" (blur)="hideDropdownWithDelay()"
+        (keyup)="this.searchTerm = searchInput.value; filteredItems" value="{{searchTerm}}" [readonly]="ngDisabled || null"
+>
+</div>

@@ -1,0 +1,10 @@
+<div class="h-100 d-flex justify-content-center align-items-center">
+    <div class="card h-auto">
+        <div class="card-body">
+            @if(title()){
+            <h5 class="card-title">{{title()}}</h5>
+            }
+            <ng-content />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+name: Build and Deploy Angular to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: date-planner-app
+        run: npm install
+
+      - name: Build Angular app
+        working-directory: date-planner-app
+        run: npm run build
+
+      - name: Fetch gh-pages and merge main into it
+        run: |
+          git fetch origin
+          git checkout gh-pages || git checkout --orphan gh-pages
+          git merge origin/main --no-edit || echo "No changes to merge"
+
+      - name: Clean docs folder
+        run: |
+          rm -rf docs
+          mkdir docs
+
+      - name: Copy build output to docs
+        run: |
+          cp -r date-planner-app/docs/browser/* docs/
+          touch docs/.nojekyll
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/*
+          git commit -m "Update GitHub Pages from main" || echo "No changes to commit"
+
+      - name: Push to gh-pages
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          force: true

@@ -1,0 +1,25 @@
+<div [class]="'mb-2 mt-1' + (vertical() && !!label() ? '' : ' row')">
+    @if (label()) {
+    <label [for]="cId" class="form-label mt-2">{{ label() }}</label>
+    }
+    @if (ngDisabled) {
+        {{setDisabledState(ngDisabled)}}
+    } @else{
+        {{setDisabledState(ngDisabled)}}
+    }
+    <div class="col-sm">
+        <input type="text"
+            #dateInputRef
+            [formControl]="formControl" 
+            [matDatepicker]="picker"
+            class="form-control {{ showError() ? 'border border-danger' : '' }} {{ ngDisabled ? 'bg-body-secondary' : '' }}"
+            [id]="cId" 
+            [placeholder]="placeholder()" 
+            (blur)="onTouched()"
+            (focus)="!ngDisabled ? picker.open():null" 
+            (click)="!ngDisabled ? picker.open():null"
+            (dateChange)="onDateSelected($event.value); picker.close()" 
+            [readonly]="ngDisabled || null"/>
+        <mat-datepicker #picker [disabled]="ngDisabled" ></mat-datepicker>        
+    </div>
+</div>

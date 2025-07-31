@@ -1,0 +1,14 @@
+<div [class]="'mb-2 mt-1' + (vertical() && !!label() ? '' : ' row')">
+    @if (label()) {
+    <label [for]="cId" class="form-label mt-2">{{ label() }}</label>
+    }
+    <div class="col-sm">
+        @if (!isPassword()) {
+        <input #textInputRef [type]="type()" class="form-control {{showError()?'border border-danger':''}} {{ngDisabled?'bg-body-secondary':''}}" [id]="cId" [placeholder]="placeholder()" [value]="value"
+            (input)="updateValue($event)" (blur)="onTouched()" [readonly]="ngDisabled || null"/>
+        } @else {
+        <input type="password" class="form-control {{showError()?'border border-danger':''}}" [id]="cId" [value]="value" (input)="updateValue($event)"
+            (blur)="onTouched()" [readonly]="ngDisabled || null"/>
+        }
+    </div>
+</div>

@@ -1,0 +1,12 @@
+<div class="mb-3">
+    @if (label) {
+    <label class="form-label">{{ label }}</label>
+    }
+    <select class="form-select" [disabled]="disabled" [value]="value" (change)="updateValue($event)"
+        (blur)="onTouched()">
+        <option [value]="''" disabled hidden>{{ placeholder }}</option>
+        @for (opt of options; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+        }
+    </select>
+</div>

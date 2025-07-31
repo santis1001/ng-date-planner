@@ -1,0 +1,21 @@
+<div class="d-flex flex-column w-100 p-2">
+    <form [formGroup]="dateForm">
+        <div class="d-flex p-3 align-items-center">
+            <ndp-date-input formControlName="newDate" />
+            <button class="btn btn-primary d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
+                (dblclick)="null" (click)="addNewDate()">
+                Add
+            </button>
+        </div>
+        <div class="d-flex px-3 align-content-stretch flex-wrap overflow-y-auto">
+            @for (item of dateNameIndex; track $index) {
+                <ndp-date-input formControlName="{{item}}"/>
+                <button class="btn btn-danger d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
+                (dblclick)="null" (click)="deleteDate(item)">
+                    delete
+                </button>
+            }
+        </div>
+    </form>
+
+</div>
