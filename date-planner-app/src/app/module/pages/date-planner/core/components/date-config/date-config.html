@@ -7,13 +7,16 @@
                 Add
             </button>
         </div>
+    </form>
+    <form [formGroup]="dateListForm">
         <div class="d-flex px-3 align-content-stretch flex-wrap overflow-y-auto">
-            @for (item of dateNameIndex; track $index) {
-            <ndp-date-options #comp label="{{item}}" (modifyClick)="updateItem(item, $event)" (deleteClick)="deleteDate(item)">
-                <ndp-date-input formControlName="{{item}}" [label]="item"/>
-            </ndp-date-options>
+            @for (item of data(); track $index) {
+                <ndp-date-options #comp label="{{item.name}}"  color="{{item.color}}" (modifyClick)="updateItem(item.name, $event)" (deleteClick)="deleteDate(item.name)">
+                    <ndp-date-input formControlName="{{item.name}}" [label]="item.name">
+                        <div [style]="`background-color: ${comp.color}; height: 14px; width: 14px; border: 1px solid #495057`"></div>
+                    </ndp-date-input>
+                </ndp-date-options>
             }
         </div>
     </form>
-
-</div>
+</div> 

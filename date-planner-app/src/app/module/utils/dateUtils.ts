@@ -25,8 +25,8 @@ export function parseFromString(value: string) {
 
     const [day, month, year] = value.split('/').map(Number);
 
-    console.log(value)
-    console.log([day, month, year])
+    // console.log(value)
+    // console.log([day, month, year])
     return new Date(year, month - 1, day);
 }
 

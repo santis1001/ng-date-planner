@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, signal, WritableSignal } from '@angular/core';
 import { DateList } from '../../types/date-planner.type';
 import { DateInput } from "@AppModule/inputs/date-input/date-input";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -10,56 +10,114 @@ import { DateOptions } from "../date-options/date-options";
   templateUrl: './date-config.html',
   styleUrl: './date-config.css'
 })
-export class DateConfig {
+export class DateConfig implements AfterViewInit {
   @Input() data: WritableSignal<DateList> = signal([]);
 
   protected readonly fb: FormBuilder = inject(FormBuilder);
+  protected dateForm: FormGroup;
+  protected dateListForm: FormGroup;
+  
   constructor() {
     this.dateForm = this.fb.group({
       newDate: [null]
     });
+    
+    this.dateListForm = this.fb.group({      
+    });
   }
 
-  protected dateForm: FormGroup;
-  protected dateNameIndex: string[] = [];
+
+
+  protected initializeFormControls() {
+    this.dateListForm = this.fb.group({      
+    });
+  }
+
+  protected additionalDateControls() {
+    this.data().forEach(item => {
+      this.dateListForm.addControl(item.name, new FormControl(item.value));
+    });
+  }
+
+  protected reloaddateListFormFromData() {
+    this.initializeFormControls();
+    this.additionalDateControls();
+    this.ngAfterViewInit();
+  }
+
+  ngAfterViewInit(): void {
+    this.dateListForm.valueChanges.subscribe(value => {
+      console.log(value);
+      Object.keys(value).forEach(key => {
+        if (value[key] === null || value[key] === undefined) {
+          console.warn(`Value for ${key} is null or undefined`);
+          return;
+        }
+        console.log(`Value for ${key}:`, value[key]);
+        this.updateDate(key);
+      });
+    });
+
+  }
 
   protected addNewDate() {
     const newDate = this.dateForm.get('newDate')?.value;
     if (newDate) {
       const name = this.randomString;
-      this.dateForm.addControl(name, new FormControl(newDate))
-      this.dateNameIndex.push(name);
-      this.data().push({ name, value: newDate, color: '#ffffff' });
+      const color = this.randomColor;
+      this.data().push({ name, value: newDate, color });
+      this.reloaddateListFormFromData();
+      this.dateForm.get('newDate')?.setValue(null);
       console.log('saved')
     }
   }
 
   protected deleteDate(name: string) {
-    const date = this.dateForm.get(name);
+    const date = this.dateListForm.get(name);
     if (date) {
-      this.dateForm.removeControl(name);
-      this.dateNameIndex = this.dateNameIndex.filter(y => y !== name);
       this.data.set(this.data().filter(item => item.name !== name));
+      this.reloaddateListFormFromData();
       console.log('deleted', name);
     }
   }
 
-  protected updateItem(name: string, event: {value: string, color: string}) {
+  protected updateItem(name: string, event: { value: string, color: string }) {
     console.log(name, event.value, event.color);
-    const index = this.dateNameIndex.indexOf(name);
+    const index = this.data().indexOf(this.data().find(item => item.name === name)!);
     const newName = event.value;
     const newColor = event.color;
     if (index !== -1 && newName) {
-      this.dateNameIndex[index] = newName;
-      this.dateForm.addControl(newName, new FormControl(this.dateForm.get(name)?.value));      
-      this.dateForm.removeControl(name);      
-      this.data().find(item => item.name === name)!.name = newName;
-      this.data().find(item => item.name === name)!.color = newColor;
+      const item = this.data().find(item => item.name === name);
+      console.log(item)
+      if (!item) {
+        console.error('Item not found for name:', name);
+        return
+      }
+
+      item.name = newName;
+      item.color = newColor;
+
+      this.reloaddateListFormFromData();
       console.log('updated', name, 'to', newName, 'with color', newColor);
+    }
+  }
+
+  protected updateDate(name: string) {
+    console.log(name, this.dateListForm.get(name)?.value);
+    const index = this.data().indexOf(this.data().find(item => item.name === name)!);
+
+    const newDate = this.dateListForm.get(name)?.value;
+    if (index !== -1 && newDate) {
+      this.data().find(item => item.name === name)!.value = newDate;
+      console.log('updated date of', name, 'to', newDate);
     }
   }
 
   protected get randomString(): string {
     return Math.random().toString(36).slice(2, 10);
   }
+  protected get randomColor(): string {
+    return `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+  }
+
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input, signal, WritableSignal } from '@angular/core';
+import { DateList } from '../../types/date-planner.type';
 
 @Component({
   selector: 'ndp-date-visualizer',
@@ -7,5 +8,8 @@ import { Component } from '@angular/core';
   styleUrl: './date-visualizer.css'
 })
 export class DateVisualizer {
+  @Input() data: WritableSignal<DateList> = signal([]);
+
+  JSON: any = JSON;
 
 }

@@ -86,7 +86,7 @@ export class DateInput implements AfterViewInit {
   onDateSelected(date: any) {
     const formattedDate = formatDateToString(date);
     if (formattedDate) {
-      console.log(formattedDate)
+      // console.log(formattedDate)
       this.writeValue(formattedDate);
       this.value = formattedDate;
       this.onChange(formattedDate);

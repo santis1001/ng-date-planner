@@ -19,6 +19,7 @@ export class DateOptions {
   @Output() modifyClick = new EventEmitter<{value: string, color: string}>();
   @Output() colorClick = new EventEmitter<void>();
   @Input() label: string = '';
+  @Input() color: string = '';
 
   protected showOptions = false;
   private overlayRef: OverlayRef | null = null;

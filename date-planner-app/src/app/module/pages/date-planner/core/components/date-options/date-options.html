@@ -13,7 +13,7 @@
             <div class="d-flex">
                 <div class="input-group me-2 mb-2 mt-1">
                     <span class="input-group-text">label</span>
-                    <input #name type="text" class="form-control" [(value)]="label">
+                    <input #nameInput type="text" class="form-control" [(value)]="label">
                 </div>
             </div>
 
@@ -23,17 +23,17 @@
                         <img src="color.svg" alt="color" style="width: 20px;" />
                     </span>
                     <div class="form-control p-0 d-flex align-items-center justify-content-center flex-grow-0 w-auto">
-                        <input #color type="color" class="p-0 mx-1">
+                        <input #colorInput type="color" class="p-0 mx-1" [(value)]="color">
                     </div>
                 </div>
 
-                <button class="btn btn-warning d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
-                    (dblclick)="null" (click)="modifyClick.emit({value: name.value, color: color.value})">
-                    <img src="modify.svg" alt="mod" style="width: 20px;" />
+                <button class="btn btn-success d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
+                    (dblclick)="null" (click)="modifyClick.emit({value: nameInput.value, color: colorInput.value});closeMenu();">
+                    <img src="save.svg" alt="mod" style="width: 20px;" />
                 </button>
 
                 <button class="btn btn-danger d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
-                    (dblclick)="null" (click)="deleteClick.emit()">
+                    (dblclick)="null" (click)="deleteClick.emit();closeMenu();">
                     <img src="delete.svg" alt="del" style="width: 20px;" />
                 </button>
                 <button class="btn btn-secondary d-flex align-items-center justify-content-center mx-2 mb-2 mt-1"
