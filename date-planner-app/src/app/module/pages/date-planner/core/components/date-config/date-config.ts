@@ -18,11 +18,11 @@ export class DateConfig implements AfterViewInit {
   protected readonly fb: FormBuilder = inject(FormBuilder);
   protected dateForm: FormGroup;
   protected dateListForm: FormGroup;
-  protected readonly radioOptions: { label: string, value: boolean }[] = 
-  [
-    { label: 'Single', value: true },
-    { label: 'Range', value: false }    
-  ];
+  protected readonly radioOptions: { label: string, value: boolean }[] =
+    [
+      { label: 'Single', value: true },
+      { label: 'Range', value: false }
+    ];
 
   constructor() {
     this.dateForm = this.fb.group({
@@ -70,7 +70,11 @@ export class DateConfig implements AfterViewInit {
     if (newDate) {
       const name = this.randomString;
       const color = this.randomColor;
-      this.data().push({ name, value: newDate, color });
+      const updated = [...this.data(), { name, value: newDate, color }];
+
+      // this.data().push({ name, value: newDate, color });
+      this.data.set(updated);
+
       this.reloaddateListFormFromData();
       this.dateForm.get('newDate')?.setValue(null);
       console.log('saved')
@@ -92,15 +96,22 @@ export class DateConfig implements AfterViewInit {
     const newName = event.value;
     const newColor = event.color;
     if (index !== -1 && newName) {
-      const item = this.data().find(item => item.name === name);
-      console.log(item)
-      if (!item) {
-        console.error('Item not found for name:', name);
-        return
-      }
+      // const item = this.data().find(item => item.name === name);
+      // console.log(item)
+      // if (!item) {
+      //   console.error('Item not found for name:', name);
+      //   return
+      // }
 
-      item.name = newName;
-      item.color = newColor;
+      const updated = this.data().map(item =>
+        item.name === name
+          ? { ...item, name: newName, color: newColor }
+          : item
+      );
+
+      // item.name = newName;
+      // item.color = newColor;
+      this.data.set(updated);
 
       this.reloaddateListFormFromData();
       console.log('updated', name, 'to', newName, 'with color', newColor);
@@ -113,7 +124,14 @@ export class DateConfig implements AfterViewInit {
 
     const newDate = this.dateListForm.get(name)?.value;
     if (index !== -1 && newDate) {
-      this.data().find(item => item.name === name)!.value = newDate;
+      const updated = this.data().map(item =>
+        item.name === name
+          ? { ...item, value: newDate }
+          : item
+      );
+
+      // this.data().find(item => item.name === name)!.value = newDate;
+      this.data.set(updated);
       console.log('updated date of', name, 'to', newDate);
     }
   }
