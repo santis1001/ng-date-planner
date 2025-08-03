@@ -3,10 +3,12 @@ import { DateList } from '../../types/date-planner.type';
 import { DateInput } from "@AppModule/inputs/date-input/date-input";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DateOptions } from "../date-options/date-options";
+import { DateRangeInput } from "@AppModule/inputs/date-range-input/date-range-input";
+import { RadioButton } from "@AppModule/buttons/radio-button/radio-button";
 
 @Component({
   selector: 'ndp-date-config',
-  imports: [DateInput, ReactiveFormsModule, DateOptions],
+  imports: [DateInput, ReactiveFormsModule, DateOptions, DateRangeInput, RadioButton],
   templateUrl: './date-config.html',
   styleUrl: './date-config.css'
 })
@@ -16,20 +18,23 @@ export class DateConfig implements AfterViewInit {
   protected readonly fb: FormBuilder = inject(FormBuilder);
   protected dateForm: FormGroup;
   protected dateListForm: FormGroup;
-  
+  protected readonly radioOptions: { label: string, value: boolean }[] = 
+  [
+    { label: 'Single', value: true },
+    { label: 'Range', value: false }    
+  ];
+
   constructor() {
     this.dateForm = this.fb.group({
       newDate: [null]
     });
-    
-    this.dateListForm = this.fb.group({      
+
+    this.dateListForm = this.fb.group({
     });
   }
 
-
-
   protected initializeFormControls() {
-    this.dateListForm = this.fb.group({      
+    this.dateListForm = this.fb.group({
     });
   }
 
@@ -118,6 +123,10 @@ export class DateConfig implements AfterViewInit {
   }
   protected get randomColor(): string {
     return `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+  }
+
+  printValue(value: any) {
+    console.log(value);
   }
 
 }

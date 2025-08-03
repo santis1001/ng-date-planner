@@ -14,6 +14,9 @@ interface IDateMarkItem extends IDateItem {
     value: string
 }
 
-export type DateItem = IDateMarkItem | IDateRangeItem
+export type DateRangeItem = IDateRangeItem
+export type DateMarkItem = IDateMarkItem 
+
+export type DateItem = DateMarkItem | DateRangeItem
 
 export type DateList = DateItem[];

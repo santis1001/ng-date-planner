@@ -1,1 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --mat-datepicker-calendar-container-background-color: #212529;
+    /* Bootstrap dark background */
+    --mat-datepicker-calendar-date-text-color: #f8f9fa;
+    --mat-datepicker-calendar-body-label-text-color: #f8f9fa;
+    --mat-datepicker-calendar-container-text-color: #f8f9fa;
+    --mat-datepicker-calendar-header-text-color: #f8f9fa;
+    --mat-datepicker-calendar-period-button-icon-color: #f8f9fa;
+    --mat-datepicker-calendar-navigation-button-icon-color: #f8f9fa;
+    --mat-datepicker-range-input-separator-color: #f8f9fa;
+    --mat-datepicker-calendar-date-in-range-state-background-color: #495057;
+        /* Light text */
+    --mdc-theme-primary: #0d6efd;
+    /* Bootstrap primary blue */
+    --mdc-theme-on-primary: #fff;
+    /* Text on primary */
+}
+
+
+.no-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+}
+
+.cursor-action {
+    cursor: pointer;
+}
+
+.cursor-action-hover:hover {
+    color: blueviolet;
+}
+
+.bg-action-hover:hover {
+    background-color: #2b3035;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-datepicker-content {
+    border: 1px solid #fff;
+}
+
+.mat-calendar-controls .mat-button {
+    color: #adb5bd;
+}
+
+.mat-calendar-period-button>span {
+    color: #dee2e6;
+}

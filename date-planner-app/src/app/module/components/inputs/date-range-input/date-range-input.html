@@ -1,0 +1,36 @@
+<div [class]="'mb-2 mt-1' + (vertical() && !!label() ? '' : ' row')">
+    @if (label()) {
+    <div class="mt-2 d-flex flex-row align-items-center justify-content-between">
+        <label [for]="cId" class="form-label">
+            {{ label() }}
+        </label>
+        <ng-content #name class="form-label"></ng-content>
+    </div>
+    }
+    @if (ngDisabled) {
+        {{setDisabledState(ngDisabled)}}
+    } @else{
+        {{setDisabledState(ngDisabled)}}
+    }
+    <div class="col-sm">
+            <mat-date-range-input [formGroup]="range" [rangePicker]="picker" class="form-control" [hidden]="false">
+                <input matStartDate #matStartDate id="matStartDate-{{cId}}"
+                formControlName="start"
+                [placeholder]="placeholder()"
+                (blur)="onTouched()"
+                (focus)="!ngDisabled ? picker.open():null"
+                (click)="!ngDisabled ? picker.open():null"
+                (dateChange)="onDateSelected($event); closePicker()?picker.close():null" 
+                [readonly]="ngDisabled || null"/> 
+                <input matEndDate #matEndDate id="matEndDate-{{cId}}"
+                formControlName="end" 
+                [placeholder]="placeholder()" 
+                (blur)="onTouched()"
+                (focus)="!ngDisabled ? picker.open():null" 
+                (click)="!ngDisabled ? picker.open():null"
+                (dateChange)="onDateSelected($event); closePicker()?picker.close():null" 
+                [readonly]="ngDisabled || null"/>
+            </mat-date-range-input>
+        <mat-date-range-picker #picker [disabled]="ngDisabled"></mat-date-range-picker>   
+    </div>
+</div>
