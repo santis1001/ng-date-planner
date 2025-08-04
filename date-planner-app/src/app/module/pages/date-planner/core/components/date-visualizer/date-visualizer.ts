@@ -4,11 +4,12 @@ import { MatCalendar } from "@angular/material/datepicker";
 import { parseFromString } from '@AppModule/dateUtils';
 import { BehaviorSubject, delay, filter } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AsyncPipe } from '@angular/common';
+import { DateListContent } from "../date-list-content/date-list-content";
+
 
 @Component({
   selector: 'ndp-date-visualizer',
-  imports: [MatCalendar, AsyncPipe],
+  imports: [MatCalendar, DateListContent],
   templateUrl: './date-visualizer.html',
   styleUrl: './date-visualizer.css'
 })

@@ -1,0 +1,11 @@
+<div class="d-flex align-items-center justify-content-start">
+    <div class="btn d-flex align-items-center justify-content-center mx-2 mb-1 mt-1 p-1 rounded-circle"
+        [style.backgroundColor]="color()">
+        <div [style.width]="'24px'" [style.height]="'24px'">
+            {{date().getDate()}}
+        </div>
+    </div>
+    <div>
+        {{label()}}
+    </div>
+</div>

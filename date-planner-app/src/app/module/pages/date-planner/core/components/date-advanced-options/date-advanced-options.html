@@ -1,0 +1,8 @@
+<div class="p-2">
+    <ndp-check #showMenu label="Advanced Options" />
+    @if(showMenu.value){
+    <div class="user-select-all">
+        {{JSON.stringify(data)}}
+    </div>
+    }
+</div>

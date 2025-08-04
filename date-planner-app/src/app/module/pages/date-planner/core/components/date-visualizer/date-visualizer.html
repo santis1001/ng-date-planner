@@ -1,8 +1,5 @@
 <!-- <style [innerHTML]="calendarStyles"></style> -->
-<div class="d-flex flex-row align-items-center justify-content-between p-2">
-    <div>
-        {{JSON.stringify(data)}}
-    </div>
+<div class="d-flex flex-row align-items-center justify-content-end p-2">
     <div class="d-flex flex-row align-items-center">
         <button class="btn btn-secondary d-flex align-items-center justify-content-center mx-2 mb-1 mt-1 p-1 rounded-circle"
             (dblclick)="null" (click)="decrementCalendarCount()">
@@ -19,6 +16,7 @@
         @for(item of calendarList(); track $index) {
             <mat-calendar #calendar1 [dateClass]="getDateClass"></mat-calendar>
         }
+        <ndp-date-list-content [data]="data"/>
     } @else {
         <div class="text-center w-100">No dates available</div>
     }

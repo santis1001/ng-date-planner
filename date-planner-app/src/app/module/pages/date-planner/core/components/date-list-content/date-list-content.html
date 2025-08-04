@@ -1,0 +1,7 @@
+<div>
+    @for(item of data; track $index) {
+        @if(typeof item.value ==='string'){
+            <ndp-date-label [label]="item.name" [color]="item.color" [date]="toDate(item.value)" />
+        }
+    }
+</div>

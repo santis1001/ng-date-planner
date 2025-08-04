@@ -1,1 +1,10 @@
-<p>check works!</p>
+<div class="form-check mb-2 mt-1 user-select-none">
+    <input class="form-check-input"
+        type="checkbox"
+        id="check-{{cId}}"
+        [formControl]="formControl"
+    />
+    <label class="form-check-label" for="check-{{cId}}">
+        {{label()}}
+    </label>
+</div>
