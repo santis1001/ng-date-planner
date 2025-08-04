@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Angular app
         working-directory: date-planner-app
-        run: npm run build
+        run: npm run build --base-href /ng-date-planner/
 
       - name: Fetch gh-pages and merge main into it
         run: |
