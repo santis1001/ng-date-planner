@@ -1,5 +1,5 @@
-<ndp-section class="user-select-none ">
-    <div class="vh-100 d-flex flex-column align-content-between mb-3">
+<ndp-section class="user-select-none vh-100">
+    <div class="d-flex flex-column align-content-between h-100">
         <div class="d-flex flex-column w-100 p-2 flex-grow-1 align-self-stretch">
             <div class="d-flex border-bottom justify-content-between p-3">
                 <h4 class="m-0">Date Planner</h4>
@@ -8,6 +8,6 @@
             <ndp-date-config [data]="dateConfig" />
             <ndp-date-visualizer [data]="dateConfigArray()"/>
         </div>
-        <ndp-date-advanced-options class="mb-3" [data]="dateConfigArray()"/>
+        <ndp-date-advanced-options class="p-3" [data]="dateConfigArray()"/>
     </div>
 </ndp-section>
