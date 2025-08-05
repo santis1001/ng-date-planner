@@ -5,6 +5,7 @@ import { parseFromString } from '@AppModule/dateUtils';
 import { BehaviorSubject, delay, filter } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DateListContent } from "../date-list-content/date-list-content";
+import { getContrastingTextColor } from '@AppModule/colorUtils';
 
 
 @Component({
@@ -56,32 +57,12 @@ export class DateVisualizer implements AfterViewInit {
 
   }
 
-  // protected calendarStyles() {
-  //   document.querySelectorAll('style[data-calendar-style]')
-  //     .forEach(el => el.remove());
-
-  //   const styleTag = document.createElement('style');
-  //   styleTag.setAttribute('data-calendar-style', 'true');
-  //   const styleContent = this.getSingleDates.map(item => {
-  //     const className = `date-${item.name}`;
-  //     return `
-  //       .${className} .mat-calendar-body-cell-content {
-  //         background-color: ${item.color} !important;
-  //         color: white !important;
-  //         border-radius: 50%;
-  //       }`;
-  //   }).join('\n');
-  //   styleTag.innerHTML = styleContent;
-  //   console.log('Adding styles for date visualizer:', styleContent);
-  //   document.head.appendChild(styleTag);
-  // }
-
   protected calendarStyles() {
-    // Remove any previously added styles
+
     document.querySelectorAll('style[data-calendar-style]').forEach(el => el.remove());
 
     const styleTag = document.createElement('style');
-    styleTag.setAttribute('data-calendar-style', 'true'); // Identify this style tag
+    styleTag.setAttribute('data-calendar-style', 'true');
 
     const singleDateStyles = this.getSingleDates.map(item => {
       const className = `date-${item.name}`;
@@ -93,21 +74,6 @@ export class DateVisualizer implements AfterViewInit {
       }`;
     });
 
-    // const rangeDateStyles = this.getRangeDates.map(item => {
-    //   const className = `date-${item.name}`;
-    //   const classRange = `date-range-${item.name}`;
-
-    //   return `
-    //   .${classRange} .mat-calendar-body-cell-content {
-    //     background-color: ${item.color}33 !important;
-    //     color: white !important;
-    //   }
-    //   .${className} .mat-calendar-body-cell-content {
-    //     background-color: ${item.color} !important;
-    //     color: white !important;
-    //   }`
-    // });
-
     const rangeDateStyles = this.getRangeDates.map(item => {
       const classNameStart = `date-${item.name}-start`;
       const classNameEnd = `date-${item.name}-end`;
@@ -116,9 +82,8 @@ export class DateVisualizer implements AfterViewInit {
       
       return `
       .${classRange} .mat-calendar-body-cell-content {
-        color: white !important;
-        position: relative;
-        z-index: 1;
+        color: ${getContrastingTextColor(item.color)} !important;
+        
       }
       .${classRange}::before{
         background-color: ${item.color}33 !important;
@@ -126,10 +91,9 @@ export class DateVisualizer implements AfterViewInit {
 
       .${classNameStart} .mat-calendar-body-cell-content {
         background-color: ${item.color} !important;
-        color: white !important;
+        color: ${getContrastingTextColor(item.color)} !important;
         border-radius: 50%;
-        position: relative;
-        z-index: 2;
+
       }
       .${classNameStart}::before{
         background-color: ${item.color}33 !important;
@@ -137,10 +101,8 @@ export class DateVisualizer implements AfterViewInit {
       
       .${classNameEnd} .mat-calendar-body-cell-content {
         background-color: ${item.color} !important;
-        color: white !important;
+        color: ${getContrastingTextColor(item.color)} !important;
         border-radius: 50%;
-        position: relative;
-        z-index: 2;
       }
 
       .${classNameEnd}::before {
