@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, computed, DestroyRef, effect, inject, Input, QueryList, Renderer2, signal, SimpleChanges, TemplateRef, ViewChild, ViewChildren, WritableSignal } from '@angular/core';
-import { DateList } from '../../types/date-planner.type';
+import { DateList, DateRangeItem } from '../../types/date-planner.type';
 import { MatCalendar } from "@angular/material/datepicker";
 import { parseFromString } from '@AppModule/dateUtils';
 import { BehaviorSubject, delay, filter } from 'rxjs';
@@ -18,8 +18,6 @@ export class DateVisualizer implements AfterViewInit {
   constructor(private domSanitizer: DomSanitizer) {
   }
 
-  // @Input() data: WritableSignal<DateList> = signal([]);
-
   JSON: any = JSON;
   selected: any;
 
@@ -28,23 +26,10 @@ export class DateVisualizer implements AfterViewInit {
   readonly calendarList = computed(() => Array.from({ length: this.calendarCount() }));
   @ViewChildren(MatCalendar) calendars!: QueryList<MatCalendar<Date>>;
 
-
   private _data = new BehaviorSubject<DateList>([]);
-  // private _dataChanged = new BehaviorSubject<boolean>(false);
-
-  // set dataChanged(value: boolean) {
-  //   this._dataChanged.next(value);
-  // }
-  // get dataChanged(): boolean {
-  //   return this._dataChanged.getValue();
-  // }
-  // get dataChangedObservable() {
-  //   return this._dataChanged.asObservable().pipe(delay(50));
-  // }
 
   @Input() set data(value: DateList) {
     this._data.next(value);
-    // console.log('Data set:', value);
   }
 
   get data(): DateList {
@@ -61,31 +46,117 @@ export class DateVisualizer implements AfterViewInit {
       .subscribe(data => {
         // console.log('Data changed:', data);
         this.calendarStyles();
-        if(this.calendars)
+        if (this.calendars)
           this.calendars.forEach(calendar => calendar.updateTodaysDate());
-        
+
       });
   }
 
   ngAfterViewInit(): void {
 
   }
-  
+
+  // protected calendarStyles() {
+  //   document.querySelectorAll('style[data-calendar-style]')
+  //     .forEach(el => el.remove());
+
+  //   const styleTag = document.createElement('style');
+  //   styleTag.setAttribute('data-calendar-style', 'true');
+  //   const styleContent = this.getSingleDates.map(item => {
+  //     const className = `date-${item.name}`;
+  //     return `
+  //       .${className} .mat-calendar-body-cell-content {
+  //         background-color: ${item.color} !important;
+  //         color: white !important;
+  //         border-radius: 50%;
+  //       }`;
+  //   }).join('\n');
+  //   styleTag.innerHTML = styleContent;
+  //   console.log('Adding styles for date visualizer:', styleContent);
+  //   document.head.appendChild(styleTag);
+  // }
+
   protected calendarStyles() {
+    // Remove any previously added styles
+    document.querySelectorAll('style[data-calendar-style]').forEach(el => el.remove());
+
     const styleTag = document.createElement('style');
-    const styleContent = this.getSingleDates.map(item => {
+    styleTag.setAttribute('data-calendar-style', 'true'); // Identify this style tag
+
+    const singleDateStyles = this.getSingleDates.map(item => {
       const className = `date-${item.name}`;
       return `
-        .${className} .mat-calendar-body-cell-content {
-          background-color: ${item.color} !important;
-          color: white !important;
-          border-radius: 50%;
-        }`;
-    }).join('\n');
+      .${className} .mat-calendar-body-cell-content {
+        background-color: ${item.color} !important;
+        color: white !important;
+        border-radius: 50%;
+      }`;
+    });
+
+    // const rangeDateStyles = this.getRangeDates.map(item => {
+    //   const className = `date-${item.name}`;
+    //   const classRange = `date-range-${item.name}`;
+
+    //   return `
+    //   .${classRange} .mat-calendar-body-cell-content {
+    //     background-color: ${item.color}33 !important;
+    //     color: white !important;
+    //   }
+    //   .${className} .mat-calendar-body-cell-content {
+    //     background-color: ${item.color} !important;
+    //     color: white !important;
+    //   }`
+    // });
+
+    const rangeDateStyles = this.getRangeDates.map(item => {
+      const classNameStart = `date-${item.name}-start`;
+      const classNameEnd = `date-${item.name}-end`;
+      const classRange = `date-range-${item.name}`;
+
+      
+      return `
+      .${classRange} .mat-calendar-body-cell-content {
+        color: white !important;
+        position: relative;
+        z-index: 1;
+      }
+      .${classRange}::before{
+        background-color: ${item.color}33 !important;
+      }
+
+      .${classNameStart} .mat-calendar-body-cell-content {
+        background-color: ${item.color} !important;
+        color: white !important;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+      }
+      .${classNameStart}::before{
+        background-color: ${item.color}33 !important;
+      }
+      
+      .${classNameEnd} .mat-calendar-body-cell-content {
+        background-color: ${item.color} !important;
+        color: white !important;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+      }
+
+      .${classNameEnd}::before {
+          background-color: ${item.color}33 !important;
+      }
+    `;
+    });
+
+
+    const styleContent = [...singleDateStyles, ...rangeDateStyles].join('\n');
     styleTag.innerHTML = styleContent;
-    console.log('Adding styles for date visualizer:', styleContent);
+
+    console.log('Applying calendar styles:\n', styleContent);
     document.head.appendChild(styleTag);
   }
+
 
   protected incrementCalendarCount() {
     this.calendarCount.update(count => count + 1);
@@ -101,15 +172,37 @@ export class DateVisualizer implements AfterViewInit {
       .filter(item => item.date != null);
   }
 
-  protected readonly getDateClass = (date: Date): string => {
-    const match = this.getSingleDates.find(item => {
-      // console.log('getDateClass', date, item.date);
-
-      return item.date!.getDate() === date.getDate() && item.date!.getMonth() === date.getMonth() && item.date!.getFullYear() === date.getFullYear()
-    }
-    );
-    if (match) console.log('getDateClass', date, match);
-    return match ? `date-${match.name}` : '';
+  protected get getRangeDates() {
+    return this.data.filter(item => typeof item.value === 'object' && item.value.start && item.value.end)
+      .map(item => {
+        const start = parseFromString((item as DateRangeItem).value.start);
+        const end = parseFromString((item as DateRangeItem).value.end);
+        return start && end ? { ...item, start, end } : null;
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
   }
+
+  protected readonly getDateClass = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    const matchSingle = this.getSingleDates.find(item => {
+      const d = item.date!;
+      return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+    });
+
+    if (matchSingle) return `date-${matchSingle.name}`;
+
+    const matchRange = this.getRangeDates.find(item => date >= item.start && date <= item.end);
+    if (!matchRange) return '';
+
+    const isStart = date.getTime() === matchRange.start.getTime()
+    const isEnd = date.getTime() === matchRange.end.getTime();
+    if (isStart || isEnd) return `mat-calendar-body-range-${isStart ? 'start' : 'end'} mat-calendar-body-in-range date-${matchRange.name}-${isStart ? 'start' : 'end'}`;
+
+    return `mat-calendar-body-in-range date-range-${matchRange.name}`;
+  };
+
 
 }

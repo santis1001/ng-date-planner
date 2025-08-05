@@ -3,7 +3,7 @@ import { DatePlanner } from './module/pages/date-planner/date-planner';
 
 export const routes: Routes = [
     {
-        title: 'Plannificador',
+        title: 'planner',
         path: 'planner',
         pathMatch: 'full',
         component: DatePlanner
