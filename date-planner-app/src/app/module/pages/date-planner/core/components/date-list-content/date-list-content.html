@@ -1,7 +1,10 @@
-<div>
+<div class="wrapped-list">
     @for(item of data; track $index) {
         @if(typeof item.value ==='string'){
             <ndp-date-label [label]="item.name" [color]="item.color" [date]="toDate(item.value)" />
+        }
+        @else {
+            <ndp-date-label isRangeDate [label]="item.name" [color]="item.color" [start]="toDate(item.value.start)" [end]="toDate(item.value.end)" />
         }
     }
 </div>

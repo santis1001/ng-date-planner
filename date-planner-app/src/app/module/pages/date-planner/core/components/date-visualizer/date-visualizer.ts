@@ -6,6 +6,7 @@ import { BehaviorSubject, delay, filter } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DateListContent } from "../date-list-content/date-list-content";
 import { getContrastingTextColor } from '@AppModule/colorUtils';
+import { StringBuilder } from '@AppModule/string-builder.utils';
 
 
 @Component({
@@ -69,7 +70,7 @@ export class DateVisualizer implements AfterViewInit {
       return `
       .${className} .mat-calendar-body-cell-content {
         background-color: ${item.color} !important;
-        color: white !important;
+        color: ${getContrastingTextColor(item.color)} !important;
         border-radius: 50%;
       }`;
     });
@@ -79,12 +80,13 @@ export class DateVisualizer implements AfterViewInit {
       const classNameEnd = `date-${item.name}-end`;
       const classRange = `date-range-${item.name}`;
 
-      
+    /*
+    .${classRange} .mat-calendar-body-cell-content {
+            color: ${getContrastingTextColor(item.color)} !important;        
+          }
+    */
       return `
-      .${classRange} .mat-calendar-body-cell-content {
-        color: ${getContrastingTextColor(item.color)} !important;
-        
-      }
+      
       .${classRange}::before{
         background-color: ${item.color}33 !important;
       }
@@ -148,22 +150,28 @@ export class DateVisualizer implements AfterViewInit {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
+    const dateClass = new StringBuilder();
+
+    
+    const matchRange = this.getRangeDates.find(item => date >= item.start && date <= item.end);
+    if (matchRange) {
+      const isStart = date.getTime() === matchRange.start.getTime()
+      const isEnd = date.getTime() === matchRange.end.getTime();
+      if (isStart || isEnd) {
+        dateClass.append(`mat-calendar-body-range-${isStart ? 'start' : 'end'} mat-calendar-body-in-range date-${matchRange.name}-${isStart ? 'start' : 'end'}`).append(' ');
+      } else {
+        dateClass.append(`mat-calendar-body-in-range date-range-${matchRange.name}`).append(' ');
+      }
+    }
 
     const matchSingle = this.getSingleDates.find(item => {
       const d = item.date!;
       return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
     });
 
-    if (matchSingle) return `date-${matchSingle.name}`;
+    if (matchSingle) dateClass.append(`date-${matchSingle.name}`).append(' ');
 
-    const matchRange = this.getRangeDates.find(item => date >= item.start && date <= item.end);
-    if (!matchRange) return '';
-
-    const isStart = date.getTime() === matchRange.start.getTime()
-    const isEnd = date.getTime() === matchRange.end.getTime();
-    if (isStart || isEnd) return `mat-calendar-body-range-${isStart ? 'start' : 'end'} mat-calendar-body-in-range date-${matchRange.name}-${isStart ? 'start' : 'end'}`;
-
-    return `mat-calendar-body-in-range date-range-${matchRange.name}`;
+    return dateClass.toString();
   };
 
 
