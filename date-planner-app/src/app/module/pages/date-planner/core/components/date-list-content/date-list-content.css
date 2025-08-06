@@ -1,5 +1,13 @@
-.wrapped-list {
+/* .wrapped-list {
+    height: 320px;
+    min-height: 150px;
+    max-height: 320px;
+    padding: 10px;
+} */
 
-    column-count: 1;
-
-}
+/*.wrapped-list > div {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 100%;    
+} */
