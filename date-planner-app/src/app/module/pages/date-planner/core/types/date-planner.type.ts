@@ -1,22 +1,38 @@
-interface IDateItem {
-    name: string,
-    color: string
-}
-interface IDateRange {
-    start: string,
-    end: string
-}
-interface IDateRangeItem extends IDateItem {
-    value: IDateRange
+
+export enum DateItemType {
+    Range = 'Range',
+    Single = 'Single',
+    Group = 'Group',
+    Unknown = 'Unknown'
 }
 
-interface IDateMarkItem extends IDateItem {
-    value: string
+// Shared base interface for all date items
+interface BaseDateItem {
+    name: string;
+    color: string;
 }
 
-export type DateRangeItem = IDateRangeItem
-export type DateMarkItem = IDateMarkItem 
+// Specific value types
+type DateRange = {
+    start: string;
+    end: string;
+};
 
-export type DateItem = DateMarkItem | DateRangeItem
+// Specialized date items
+export interface DateRangeItem extends BaseDateItem {
+    value: { start: string; end: string };
+}
 
+export interface DateSingleItem extends BaseDateItem {
+    value: string;
+}
+
+export interface DateMarkGroup extends BaseDateItem {
+    value: string[];
+}
+
+// Unified type for all possible date items
+export type DateItem = DateRangeItem | DateSingleItem | DateMarkGroup;
+
+// A list of date items
 export type DateList = DateItem[];

@@ -7,6 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { DateListContent } from "../date-list-content/date-list-content";
 import { getContrastingTextColor } from '@AppModule/colorUtils';
 import { StringBuilder } from '@AppModule/string-builder.utils';
+import { isDateGroupItem, isDateRangeItem } from '../../functions/date.functions';
 
 
 @Component({
@@ -75,16 +76,26 @@ export class DateVisualizer implements AfterViewInit {
       }`;
     });
 
+    const groupDateStyles = this.getGroupDates.map(item => {
+      const className = `date-${item.name}`;
+      return `
+      .${className} .mat-calendar-body-cell-content {
+        background-color: ${item.color} !important;
+        color: ${getContrastingTextColor(item.color)} !important;
+        border-radius: 50%;
+      }`;
+    });
+
     const rangeDateStyles = this.getRangeDates.map(item => {
       const classNameStart = `date-${item.name}-start`;
       const classNameEnd = `date-${item.name}-end`;
       const classRange = `date-range-${item.name}`;
 
-    /*
-    .${classRange} .mat-calendar-body-cell-content {
-            color: ${getContrastingTextColor(item.color)} !important;        
-          }
-    */
+      /*
+      .${classRange} .mat-calendar-body-cell-content {
+              color: ${getContrastingTextColor(item.color)} !important;        
+            }
+      */
       return `
       
       .${classRange}::before{
@@ -114,7 +125,7 @@ export class DateVisualizer implements AfterViewInit {
     });
 
 
-    const styleContent = [...singleDateStyles, ...rangeDateStyles].join('\n');
+    const styleContent = [...singleDateStyles, ...groupDateStyles, ...rangeDateStyles].join('\n');
     styleTag.innerHTML = styleContent;
 
     console.log('Applying calendar styles:\n', styleContent);
@@ -137,7 +148,7 @@ export class DateVisualizer implements AfterViewInit {
   }
 
   protected get getRangeDates() {
-    return this.data.filter(item => typeof item.value === 'object' && item.value.start && item.value.end)
+    return this.data.filter(item => typeof item.value === 'object' && isDateRangeItem(item) && item.value.start && item.value.end)
       .map(item => {
         const start = parseFromString((item as DateRangeItem).value.start);
         const end = parseFromString((item as DateRangeItem).value.end);
@@ -146,21 +157,29 @@ export class DateVisualizer implements AfterViewInit {
       .filter((item): item is NonNullable<typeof item> => item !== null);
   }
 
+  protected get getGroupDates() {
+    return this.data.filter(item => typeof item.value === 'object' && isDateGroupItem(item) && item.value.length > 0)
+      .map(item => {
+        return { ...item, dates: (item.value as []).map(d => parseFromString(d)) };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  }
+
   protected readonly getDateClass = (date: Date): string => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
-    const dateClass = new StringBuilder();
+    const dateClass: string[] = [];
 
-    
+
     const matchRange = this.getRangeDates.find(item => date >= item.start && date <= item.end);
     if (matchRange) {
       const isStart = date.getTime() === matchRange.start.getTime()
       const isEnd = date.getTime() === matchRange.end.getTime();
       if (isStart || isEnd) {
-        dateClass.append(`mat-calendar-body-range-${isStart ? 'start' : 'end'} mat-calendar-body-in-range date-${matchRange.name}-${isStart ? 'start' : 'end'}`).append(' ');
+        dateClass.push(`mat-calendar-body-range-${isStart ? 'start' : 'end'} mat-calendar-body-in-range date-${matchRange.name}-${isStart ? 'start' : 'end'}`);
       } else {
-        dateClass.append(`mat-calendar-body-in-range date-range-${matchRange.name}`).append(' ');
+        dateClass.push(`mat-calendar-body-in-range date-range-${matchRange.name}`)
       }
     }
 
@@ -169,9 +188,18 @@ export class DateVisualizer implements AfterViewInit {
       return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
     });
 
-    if (matchSingle) dateClass.append(`date-${matchSingle.name}`).append(' ');
+    if (matchSingle) dateClass.push(`date-${matchSingle.name}`);
 
-    return dateClass.toString();
+    const matchGroup = this.getGroupDates.find(item => {
+      return item.dates.some(date => {
+        return date && date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
+      });
+    });
+    if (matchGroup) dateClass.push(`date-${matchGroup.name}`)
+
+    if (dateClass.length > 0) console.log('Date classes for', date, ':', dateClass.join(' '));
+    
+    return dateClass.join(" ").toString();
   };
 
 

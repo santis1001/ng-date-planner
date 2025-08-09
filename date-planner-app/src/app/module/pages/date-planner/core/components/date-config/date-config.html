@@ -8,6 +8,9 @@
                 @case ('Range') {             
                     <ndp-date-range-input  formControlName="newDate" />
                 }
+                @case ('Group') {
+                    <ndp-date-input formControlName="newDate" />                    
+                }
                 @default {
                     <ndp-date-input formControlName="newDate" />
                 }
@@ -24,15 +27,21 @@
         <div class="d-flex px-3 align-content-stretch flex-wrap overflow-y-auto">
             @for (item of data(); track $index) {
                 <ndp-date-options #comp label="{{item.name}}"  color="{{item.color}}" (modifyClick)="updateItem(item.name, $event)" (deleteClick)="deleteDate(item.name)">
-                @if (typeof item.value == 'string') {
+                @if (isDateSingleItem(item)) {
                     <ndp-date-input formControlName="{{item.name}}" [label]="item.name">
                         <div [style]="`background-color: ${comp.color}; height: 14px; width: 14px; border: 1px solid #495057`"></div>
                     </ndp-date-input>
-                } @else {
-                        <ndp-date-range-input formControlName="{{item.name}}" [label]="item.name">
-                            <div [style]="`background-color: ${comp.color}; height: 14px; width: 14px; border: 1px solid #495057`"></div>
-                        </ndp-date-range-input>
-                    }
+                }
+                @else if (isDateGroupItem(item)) { 
+                    <ndp-date-group formControlName="{{item.name}}" [label]="item.name">
+                        <div [style]="`background-color: ${comp.color}; height: 14px; width: 14px; border: 1px solid #495057`"></div>
+                    </ndp-date-group>
+                }
+                @else if (isDateRangeItem(item)) {
+                    <ndp-date-range-input formControlName="{{item.name}}" [label]="item.name">
+                        <div [style]="`background-color: ${comp.color}; height: 14px; width: 14px; border: 1px solid #495057`"></div>
+                    </ndp-date-range-input>
+                }
                 </ndp-date-options>
             }
         </div>

@@ -5,7 +5,12 @@
             <div [style.height]="'24px'" [style.color]="getContrastingTextColor(color())">
                 {{start().getDate()}} - {{end().getDate()}}
             </div>    
-        } 
+        }
+        @else if(isDateGroup()) {
+            <div [style.height]="'24px'"[style.width]="'24px'" [style.color]="getContrastingTextColor(color())">
+                &nbsp;
+            </div>
+        }
         @else {
             <div [style.width]="'24px'" [style.height]="'24px'" [style.color]="getContrastingTextColor(color())">
                 {{date().getDate()}}

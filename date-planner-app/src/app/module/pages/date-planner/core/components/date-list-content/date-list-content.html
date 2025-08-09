@@ -1,10 +1,13 @@
 <div class="wrapped-list h-75">
     <div class="d-flex flex-grow-0 flex-column flex-wrap mh-100">
         @for(item of data; track $index) {
-            @if(typeof item.value ==='string'){
+            @if (isDateSingleItem(item)) {
                 <ndp-date-label [label]="item.name" [color]="item.color" [date]="toDate(item.value)" />
             }
-            @else {
+            @else if (isDateGroupItem(item)) { 
+                <ndp-date-label isDateGroup [label]="item.name" [color]="item.color"  />
+            }
+            @else if (isDateRangeItem(item)) {
                 <ndp-date-label isRangeDate [label]="item.name" [color]="item.color" [start]="toDate(item.value.start)" [end]="toDate(item.value.end)" />
             }
         }

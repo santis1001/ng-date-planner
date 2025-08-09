@@ -125,6 +125,7 @@ export class DateRangeInput implements AfterViewInit {
 
     }
   }
+
   closePicker() {
     if (this.value.start && this.value.end) {
       return true;

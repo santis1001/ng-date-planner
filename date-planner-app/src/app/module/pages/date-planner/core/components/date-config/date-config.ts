@@ -1,14 +1,17 @@
-import { AfterViewInit, Component, inject, Input, signal, WritableSignal } from '@angular/core';
-import { DateList } from '../../types/date-planner.type';
+import { AfterViewInit, Component, inject, Input, signal, ViewChild, viewChild, WritableSignal } from '@angular/core';
+import { DateItemType, DateList } from '../../types/date-planner.type';
 import { DateInput } from "@AppModule/inputs/date-input/date-input";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DateOptions } from "../date-options/date-options";
 import { DateRangeInput } from "@AppModule/inputs/date-range-input/date-range-input";
+import { DateGroup } from "@AppModule/inputs/date-group/date-group";
 import { RadioButton } from "@AppModule/buttons/radio-button/radio-button";
+import { getDateItemType, isDateGroupItem, isDateRangeItem, isDateSingleItem } from '../../functions/date.functions';
+import { distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'ndp-date-config',
-  imports: [DateInput, ReactiveFormsModule, DateOptions, DateRangeInput, RadioButton],
+  imports: [DateInput, ReactiveFormsModule, DateOptions, DateRangeInput, RadioButton, DateGroup],
   templateUrl: './date-config.html',
   styleUrl: './date-config.css'
 })
@@ -18,11 +21,19 @@ export class DateConfig implements AfterViewInit {
   protected readonly fb: FormBuilder = inject(FormBuilder);
   protected dateForm: FormGroup;
   protected dateListForm: FormGroup;
+  protected Array = Array;
+  @ViewChild('dateOptions')
+  protected dateOptions!: RadioButton;
+
   protected readonly radioOptions: { label: string, value: boolean }[] =
     [
       { label: 'Single', value: true },
-      { label: 'Range', value: false }
+      { label: 'Range', value: false },
+      { label: 'Group', value: false }
     ];
+  protected isDateGroupItem = (val: any) => isDateGroupItem(val);
+  protected isDateSingleItem = (val: any) => isDateSingleItem(val);
+  protected isDateRangeItem = (val: any) => isDateRangeItem(val);
 
   constructor() {
     this.dateForm = this.fb.group({
@@ -51,7 +62,11 @@ export class DateConfig implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dateListForm.valueChanges.subscribe(value => {
+    this.dateListForm.valueChanges
+    .pipe(
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    )
+    .subscribe(value => {
       console.log(value);
       Object.keys(value).forEach(key => {
         if (value[key] === null || value[key] === undefined) {
@@ -66,7 +81,9 @@ export class DateConfig implements AfterViewInit {
   }
 
   protected addNewDate() {
-    const newDate = this.dateForm.get('newDate')?.value;
+    let newDate = this.dateForm.get('newDate')?.value;
+    if (this.dateOptions.value == 'Group') newDate = [newDate];
+    console.log('Adding new date:', typeof newDate);
     if (newDate) {
       const name = this.randomString;
       const color = this.randomColor;

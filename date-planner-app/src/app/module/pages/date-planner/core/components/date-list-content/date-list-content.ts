@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { DateList } from '../../types/date-planner.type';
 import { DateLabel } from "../date-label/date-label";
 import { parseFromString } from '@AppModule/dateUtils';
+import { isDateGroupItem, isDateSingleItem, isDateRangeItem } from '../../functions/date.functions';
 
 @Component({
   selector: 'ndp-date-list-content',
@@ -13,6 +14,9 @@ import { parseFromString } from '@AppModule/dateUtils';
 export class DateListContent {
 
   private _data = new BehaviorSubject<DateList>([]);
+  protected isDateGroupItem = (val: any) => isDateGroupItem(val);
+  protected isDateSingleItem = (val: any) => isDateSingleItem(val);
+  protected isDateRangeItem = (val: any) => isDateRangeItem(val);
 
   @Input() set data(value: DateList) {
     this._data.next(value);

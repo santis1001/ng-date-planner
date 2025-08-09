@@ -15,7 +15,7 @@ export function getContrastingTextColor(hexColor: string): 'white' | 'black' {
     const luminance = 0.2126 * R + 0.7152 * G + 0.0722 * B;
 
     // Use white text if background is dark, black otherwise
-    console.log(`Hex Color: ${hexColor}, Luminance: ${luminance}`);
+    // console.log(`Hex Color: ${hexColor}, Luminance: ${luminance}`);
     
     return luminance < 0.5 ? 'white' : 'black';
 }

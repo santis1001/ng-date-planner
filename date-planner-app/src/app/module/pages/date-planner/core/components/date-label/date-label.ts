@@ -15,6 +15,7 @@ export class DateLabel {
   end = input<Date>(new Date());
 
   isRangeDate = input(false, { transform: booleanAttribute });
+  isDateGroup = input(false, { transform: booleanAttribute });
 
   getContrastingTextColor = getContrastingTextColor;
 }
